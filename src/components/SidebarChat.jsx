@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import icons from "../icons";
 import { faker } from "@faker-js/faker";
 import { db } from "../firebase";
-import {addDoc,collection} from "firebase/firestore";
+import {addDoc,collection,serverTimestamp} from "firebase/firestore";
 
 
 
-const SidebarChart = ({ isToAdd, title, message,groupImage }) => {
+const SidebarChat = ({ isToAdd, title, message,groupImage }) => {
   const [chatImage, setChatImage] = useState("");
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const SidebarChart = ({ isToAdd, title, message,groupImage }) => {
     const roomName = prompt("Please enter the name for the chat room");
     if (roomName){
 
-      await addDoc(collection(db,'rooms'), { name: roomName,"image":faker.image.avatar() });
+      await addDoc(collection(db,'rooms'), { name: roomName,"image":faker.image.avatar(),timestamp:serverTimestamp() });
     }else{
       alert("Room Name can't be empty")
     }
@@ -50,4 +50,4 @@ const SidebarChart = ({ isToAdd, title, message,groupImage }) => {
   );
 };
 
-export default SidebarChart;
+export default SidebarChat;

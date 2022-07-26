@@ -1,23 +1,32 @@
 import { useState, useEffect } from "react";
 import icons from "../icons";
-import SidebarChart from "./SidebarChart";
+import SidebarChat from "./SidebarChat";
 import { UserAuth } from "../context/AuthContext";
 import { db } from "../firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { Link } from "react-router-dom";
+import { query, orderBy } from "firebase/firestore"; 
 
 const Sidebar = () => {
   const { user } = UserAuth();
   const [rooms, setRooms] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  
+
+  const truncate =(str) => {
+    return str.length > 30 ? str.substring(0, 30) + "..." : str;
+}
 
   useEffect(() => {
-    const querySnapshot = collection(db, "rooms");
-    const unsubscribe = onSnapshot(querySnapshot, (snapshot) => {
+   
+    const data = query(collection(db, "rooms"),orderBy("timestamp",'desc'));
+    const unsubscribe = onSnapshot(data, (snapshot) => {
       setRooms(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
+   
 
     return () => unsubscribe();
+
   }, []);
 
   const searchedRoom = rooms.filter((room) => {
@@ -31,7 +40,7 @@ const Sidebar = () => {
   const searchRoomItem = searchedRoom.map((room) => {
     return (
       <Link to={`/whatsapp/rooms/${room.id}`} key={room.id}>
-        <SidebarChart
+        <SidebarChat
           title={room.name}
           message="President Buhari has ordered ASUU.."
           groupImage={room.image}
@@ -73,18 +82,18 @@ const Sidebar = () => {
         </div>
         <icons.FilterListIcon />
       </div>
-      <SidebarChart isToAdd title={"Create New Chat"} />
-
+      <SidebarChat isToAdd title={"Create New Chat"} />
       {searchRoomItem.length > 0
         ? searchRoomItem
         : rooms.map((room) => (
             <Link to={`/whatsapp/rooms/${room.id}`} key={room.id}>
-              <SidebarChart
-                title={room.name}
-                message="President Buhari has ordered ASUU.."
+              <SidebarChat
+                title={truncate(room.name)}
+                message={truncate(room.name)}
                 groupImage={room.image}
               />
             </Link>
+            
           ))}
     </section>
   );

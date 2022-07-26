@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import icons from "../icons";
 import Chat from "./Chat";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot,query,orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 import Footer from "./Footer";
 import { faker } from "@faker-js/faker";
@@ -15,7 +15,7 @@ const ChatContainer = () => {
 
   useEffect(() => {
     const getMessages = async () => {
-      const docRef = await collection(db, "rooms", `${roomId}`, "messages");
+      const docRef = await query(collection(db, "rooms", `${roomId}`, "messages"),orderBy('timestamp','asc'));
       if (!docRef.empty) {
         onSnapshot(docRef, (snapshot) => {
           setMessages(
