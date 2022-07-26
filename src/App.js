@@ -1,23 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import LoginPage from "./page/LoginPage";
+import { UserAuth } from "./context/AuthContext";
+import HomePage from "./page/HomePage";
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
+  const { user } = UserAuth();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="h-[100vh] w-full bg-[#F0F2F5] flex">
+      <Routes>
+        <Route path="/" element={<LoginPage />}></Route>
+        <Route
+          path="/whatsapp/*"
+          element={
+            <ProtectedRoutes>
+              <HomePage />
+            </ProtectedRoutes>
+          }
+        ></Route>
+      </Routes>
     </div>
   );
 }
